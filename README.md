@@ -103,6 +103,20 @@ To stop it:
 pkill -f "python main.py"
 ```
 
+## Moving Files to Your Media Server
+
+The Downloads tab includes **Move to Movies** and **Move to TV Shows** buttons. These move all completed files from your qBittorrent download directory to the folder your media server (Plex, Jellyfin, Emby, etc.) is watching for new content.
+
+Set the three path variables in `config.py` to match your setup:
+
+- `TORRENTS_DIR` - Where qBittorrent saves completed downloads
+- `MOVIES_DIR` - The folder your media server scans for movies
+- `TV_SHOWS_DIR` - The folder your media server scans for TV shows
+
+Once files are moved, your media server will automatically pick them up and add them to your library.
+
+**Note:** The user running the app must have read/write permissions to all three directories. If your media is on a network share (NAS), make sure the share is mounted with the correct `uid`/`gid` so the app can move files without `sudo`.
+
 ## Tech Stack
 
 - **Backend** - [FastAPI](https://fastapi.tiangolo.com/) + [Uvicorn](https://www.uvicorn.org/)
