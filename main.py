@@ -193,6 +193,15 @@ async def resume_torrent(request: Request):
     return JSONResponse({"status": "ok"} if resp.status_code == 200 else {"error": resp.text})
 
 
+@app.post("/api/torrents/stop")
+async def stop_torrent(request: Request):
+    body = await request.json()
+    resp = await qbt_request(
+        "POST", "/api/v2/torrents/stop", data={"hashes": body["hash"]}
+    )
+    return JSONResponse({"status": "ok"} if resp.status_code == 200 else {"error": resp.text})
+
+
 @app.post("/api/torrents/delete")
 async def delete_torrent(request: Request):
     body = await request.json()

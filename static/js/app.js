@@ -191,6 +191,7 @@ function renderDownload(t) {
                     ? `<button class="btn-sm btn-resume" onclick="resumeTorrent('${t.hash}')">Resume</button>`
                     : `<button class="btn-sm btn-pause" onclick="pauseTorrent('${t.hash}')">Pause</button>`
                 }
+                <button class="btn-sm btn-stop" onclick="stopTorrent('${t.hash}')">Stop</button>
                 <button class="btn-sm btn-delete" onclick="confirmDelete('${t.hash}', '${escapeAttr(t.name)}')">Delete</button>
             </div>
         </div>`;
@@ -218,6 +219,12 @@ async function pauseTorrent(hash) {
 async function resumeTorrent(hash) {
     await api("/api/torrents/resume", { method: "POST", body: JSON.stringify({ hash }) });
     showToast("Torrent resumed");
+    refreshDownloads();
+}
+
+async function stopTorrent(hash) {
+    await api("/api/torrents/stop", { method: "POST", body: JSON.stringify({ hash }) });
+    showToast("Torrent stopped");
     refreshDownloads();
 }
 

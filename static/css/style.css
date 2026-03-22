@@ -317,6 +317,11 @@ html, body {
     color: #fff;
 }
 
+.btn-stop {
+    background: var(--text-dim);
+    color: #fff;
+}
+
 .btn-delete {
     background: var(--red);
     color: #fff;
