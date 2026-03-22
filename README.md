@@ -4,11 +4,9 @@ A lightweight, mobile-friendly web UI for searching torrents via [Prowlarr](http
 
 ## Screenshots
 
-<p align="center">
-  <img src="screenshots/search.png" width="300" alt="Search Tab">
-  &nbsp;&nbsp;
-  <img src="screenshots/downloads.png" width="300" alt="Downloads Tab">
-</p>
+<img width="680" height="363" alt="image" src="https://github.com/user-attachments/assets/0e8df1fa-f6c3-432e-becd-22bdec481e87" />
+<img width="655" height="327" alt="image" src="https://github.com/user-attachments/assets/377c28e0-51f3-4e2a-8d92-21d4b96a3ad2" />
+
 
 ## Features
 
