@@ -268,3 +268,27 @@ const observer = new MutationObserver(() => {
 observer.observe($("#tab-downloads"), { attributes: true, attributeFilter: ["class"] });
 
 $("#refresh-btn").addEventListener("click", refreshDownloads);
+
+// ---------------------------------------------------------------------------
+// Move Files
+// ---------------------------------------------------------------------------
+async function moveFiles(type) {
+    const label = type === "movie" ? "Movies" : "TV Shows";
+    if (!confirm(`Move all files from Torrents to ${label}?`)) return;
+
+    try {
+        const resp = await api("/api/files/move", {
+            method: "POST",
+            body: JSON.stringify({ type }),
+        });
+        if (resp.status === "ok") {
+            showToast(`Moved ${resp.moved} item(s) to ${label}`);
+        } else if (resp.status === "partial") {
+            showToast(`Moved ${resp.moved}, ${resp.errors.length} failed`, true);
+        } else {
+            showToast(resp.error || "Move failed", true);
+        }
+    } catch {
+        showToast("Failed to move files", true);
+    }
+}

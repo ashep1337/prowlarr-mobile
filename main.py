@@ -1,3 +1,6 @@
+import shutil
+from pathlib import Path
+
 import httpx
 import uvicorn
 from fastapi import FastAPI, Request, Query
@@ -202,6 +205,42 @@ async def delete_torrent(request: Request):
         },
     )
     return JSONResponse({"status": "ok"} if resp.status_code == 200 else {"error": resp.text})
+
+
+# ---------------------------------------------------------------------------
+# File management
+# ---------------------------------------------------------------------------
+@app.post("/api/files/move")
+async def move_files(request: Request):
+    """Move completed downloads to Movies or TV Shows folder."""
+    body = await request.json()
+    media_type = body.get("type")
+    if media_type not in ("movie", "show"):
+        return JSONResponse({"error": "Invalid type. Use 'movie' or 'show'."}, status_code=400)
+
+    dest = Path(config.MOVIES_DIR) if media_type == "movie" else Path(config.TV_SHOWS_DIR)
+    src = Path(config.TORRENTS_DIR)
+
+    if not src.exists():
+        return JSONResponse({"error": "Torrents directory not found"}, status_code=404)
+
+    items = list(src.iterdir())
+    if not items:
+        return JSONResponse({"error": "No files to move"}, status_code=400)
+
+    dest.mkdir(parents=True, exist_ok=True)
+    moved = 0
+    errors = []
+    for item in items:
+        try:
+            shutil.move(str(item), str(dest / item.name))
+            moved += 1
+        except Exception as e:
+            errors.append(f"{item.name}: {e}")
+
+    if errors:
+        return JSONResponse({"status": "partial", "moved": moved, "errors": errors})
+    return JSONResponse({"status": "ok", "moved": moved})
 
 
 # ---------------------------------------------------------------------------
