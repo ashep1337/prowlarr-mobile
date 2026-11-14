@@ -1,0 +1,18 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@ --with python3 --buildsystem=none
+
+override_dh_auto_test:
+	/usr/bin/python3 -m unittest discover -s tests -v
+
+override_dh_python3:
+	dh_python3 /usr/lib/prowlarr-mobile
+
+override_dh_installsystemd:
+	dh_installsysusers
+	dh_installsystemd
+
+override_dh_fixperms:
+	dh_fixperms
+	chmod 0600 debian/prowlarr-mobile/etc/prowlarr-mobile/prowlarr-mobile.env

@@ -1,0 +1,5 @@
+main.py config.py usr/lib/prowlarr-mobile/
+static usr/lib/prowlarr-mobile/
+templates usr/lib/prowlarr-mobile/
+packaging/prowlarr-mobile usr/bin/
+packaging/prowlarr-mobile.env etc/prowlarr-mobile/

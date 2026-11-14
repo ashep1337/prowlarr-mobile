@@ -1,0 +1,10 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: prowlarr-mobile
+Source: https://github.com/ashep1337/prowlarr-mobile
+
+Files: *
+Copyright: 2026 Alex Shephard
+License: unspecified
+ The upstream repository has not declared a project license.
+ This metadata does not grant additional rights to the application.
+ Select a project license before publishing packages for redistribution.

@@ -21,35 +21,44 @@ A lightweight, mobile-friendly web UI for searching torrents via [Prowlarr](http
 
 ## Prerequisites
 
-- Python 3.10+
+- Debian 13 with systemd for the `.deb` installation below; APT installs Python and the required libraries
 - A running [Prowlarr](https://prowlarr.com/) instance with indexers configured
 - A running [qBittorrent](https://www.qbittorrent.org/) instance with Web UI enabled
 - All services accessible on the same network
 
 ## Setup
 
-### 1. Clone the repo
+### 1. Download the package
+
+Download `prowlarr-mobile_0.1.0-2_all.deb` from the [0.1.0-2 release](https://github.com/ashep1337/prowlarr-mobile/releases/tag/v0.1.0-2), currently marked as a prerelease. You can also download it from a terminal:
 
 ```bash
-git clone https://github.com/ashep1337/prowlarr-mobile.git
-cd prowlarr-mobile
+sudo apt update
+sudo apt install curl ca-certificates
+
+curl -fL -o prowlarr-mobile_0.1.0-2_all.deb \
+  https://github.com/ashep1337/prowlarr-mobile/releases/download/v0.1.0-2/prowlarr-mobile_0.1.0-2_all.deb
 ```
 
-### 2. Create a virtual environment and install dependencies
+### 2. Install the package
+
+From the directory containing the downloaded file:
 
 ```bash
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+sudo apt install ./prowlarr-mobile_0.1.0-2_all.deb
 ```
 
-### 3. Configure environment variables
+The package installs its dependencies, creates a dedicated `prowlarr-mobile` service account, and enables/starts the systemd service. No source checkout, virtual environment, or build tools are needed.
+
+If you previously started the app manually, stop that instance before installation so port `8888` is available.
+
+### 3. Configure your connections
 
 ```bash
-cp .env.example .env
+sudoedit /etc/prowlarr-mobile/prowlarr-mobile.env
 ```
 
-Edit `.env` with your values:
+Set your service addresses and credentials in this installed configuration file:
 
 ```env
 # Prowlarr Configuration
@@ -71,43 +80,68 @@ MOVIES_DIR=/path/to/your/plex/movies
 TV_SHOWS_DIR=/path/to/your/plex/tv-shows
 ```
 
-You can find your Prowlarr API key in **Prowlarr > Settings > General > API Key**.
+You can find your Prowlarr API key in **Prowlarr > Settings > General > API Key**. Use the actual server addresses if Prowlarr or qBittorrent runs on another machine. The file-management paths are optional; configure them before using the move buttons.
 
-### 4. Run the app
-
-```bash
-python main.py
-```
-
-Then open `http://your-server-ip:8888` on your phone.
-
-## Running in the Background
-
-To keep the app running after closing your terminal session:
+### 4. Restart and open the app
 
 ```bash
-cd /path/to/prowlarr-mobile
-source venv/bin/activate
-nohup python main.py > app.log 2>&1 &
+sudo systemctl restart prowlarr-mobile
+systemctl status prowlarr-mobile --no-pager
+curl --fail http://127.0.0.1:8888/health
 ```
 
-To check if it's running:
+The health check should return `{"status":"ok"}`. It checks the app itself; it does not test the external services.
+
+Open `http://your-server-ip:8888` on your phone. By default the package listens on `0.0.0.0:8888`; use the server's actual IP address in your browser. The app has no built-in login, so use it on a trusted local network or behind an authentication layer.
+
+## Managing the Service
+
+The service runs in the background and starts automatically at boot.
 
 ```bash
-ps aux | grep "python main.py"
+# Check status
+systemctl status prowlarr-mobile --no-pager
+
+# Restart after changing configuration
+sudo systemctl restart prowlarr-mobile
+
+# Stop or start the app
+sudo systemctl stop prowlarr-mobile
+sudo systemctl start prowlarr-mobile
+
+# Follow application logs; press Ctrl+C to stop viewing
+sudo journalctl -u prowlarr-mobile -f
 ```
 
-To stop it:
+## Updating
+
+Download the new `.deb` from [Releases](https://github.com/ashep1337/prowlarr-mobile/releases), then install that local file with APT:
 
 ```bash
-pkill -f "python main.py"
+sudo apt install ./prowlarr-mobile_VERSION_all.deb
 ```
+
+Replace `VERSION` with the downloaded filename's version. Installing the new package upgrades the existing installation and restarts the service. If APT asks about a modified configuration file, keep your current settings and merge any new options as needed. A changed package default may not replace a value already saved in your configuration.
+
+Updates are installed from the downloaded packages; a GitHub release alone does not add an APT update repository.
+
+## Uninstalling
+
+```bash
+# Remove the app while retaining its configuration
+sudo apt remove prowlarr-mobile
+
+# Also remove package-managed configuration
+sudo apt purge prowlarr-mobile
+```
+
+The service account and any runtime state are retained. Download and media directories are not removed.
 
 ## Moving Files to Your Media Server
 
-The Downloads tab includes **Move to Movies** and **Move to TV Shows** buttons. These move all completed files from your qBittorrent download directory to the folder your media server (Plex, Jellyfin, Emby, etc.) is watching for new content.
+The Downloads tab includes **Move to Movies** and **Move to TV Shows** buttons. These move the contents of your configured download directory to the folder your media server (Plex, Jellyfin, Emby, etc.) is watching for new content. The current move action does not check qBittorrent completion status, so configure a directory containing only completed downloads.
 
-Set the three path variables in `config.py` to match your setup:
+Set the three path variables in `/etc/prowlarr-mobile/prowlarr-mobile.env` to match your setup, then restart the service:
 
 - `TORRENTS_DIR` - Where qBittorrent saves completed downloads
 - `MOVIES_DIR` - The folder your media server scans for movies
@@ -115,7 +149,7 @@ Set the three path variables in `config.py` to match your setup:
 
 Once files are moved, your media server will automatically pick them up and add them to your library.
 
-**Note:** The user running the app must have read/write permissions to all three directories. If your media is on a network share (NAS), make sure the share is mounted with the correct `uid`/`gid` so the app can move files without `sudo`.
+**Note:** These paths must be accessible on the machine running Prowlarr Mobile. For storage on another machine, mount it locally first. The `prowlarr-mobile` service account needs read/write access to the source and destination directories and access through their parent directories. If your media is on a network share (NAS), configure its mount permissions for that service account; `id prowlarr-mobile` shows its UID and GID.
 
 ## Tech Stack
 

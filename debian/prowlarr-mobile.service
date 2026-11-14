@@ -1,0 +1,25 @@
+[Unit]
+Description=Prowlarr Mobile web interface
+Documentation=https://github.com/ashep1337/prowlarr-mobile
+After=network.target
+
+[Service]
+Type=exec
+User=prowlarr-mobile
+Group=prowlarr-mobile
+WorkingDirectory=/var/lib/prowlarr-mobile
+EnvironmentFile=/etc/prowlarr-mobile/prowlarr-mobile.env
+Environment=PYTHONDONTWRITEBYTECODE=1
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/prowlarr-mobile
+StateDirectory=prowlarr-mobile
+StateDirectoryMode=0750
+Restart=on-failure
+RestartSec=3s
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+
+[Install]
+WantedBy=multi-user.target

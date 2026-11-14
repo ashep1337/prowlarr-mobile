@@ -1,3 +1,31 @@
 /venv
 .env
 __pycache__/
+
+# Local configuration and Python environments
+.env
+/venv/
+/.venv/
+__pycache__/
+*.py[cod]
+
+# Logs and release outputs
+*.log
+/*.deb
+/*.buildinfo
+/*.changes
+/*.tar.gz
+
+# Generated Debian build files
+/debian/.debhelper/
+/debian/debhelper-build-stamp
+/debian/files
+/debian/prowlarr-mobile/
+/debian/*.debhelper
+/debian/*.substvars
+/debian/*.debhelper.log
+
+# Local duplicate source folders
+/prowlarr-mobile-0.1.0/
+/prowlarr-mobile/
+/artifacts/
