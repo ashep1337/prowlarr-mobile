@@ -10,9 +10,11 @@ from fastapi.templating import Jinja2Templates
 
 import config
 
+APP_DIR = Path(__file__).resolve().parent
+
 app = FastAPI(title="Prowlarr Mobile")
-app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory=APP_DIR / "static"), name="static")
+templates = Jinja2Templates(directory=APP_DIR / "templates")
 
 # ---------------------------------------------------------------------------
 # qBittorrent session management
@@ -68,6 +70,12 @@ def prowlarr_headers() -> dict:
 # ---------------------------------------------------------------------------
 # Page
 # ---------------------------------------------------------------------------
+@app.get("/health")
+async def health():
+    """Report that the app is running without contacting download services."""
+    return {"status": "ok"}
+
+
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
     return templates.TemplateResponse(request=request, name="index.html")
@@ -256,4 +264,4 @@ async def move_files(request: Request):
 # Run
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
-    uvicorn.run("main:app", host=config.HOST, port=config.PORT, reload=True)
+    uvicorn.run("main:app", host=config.HOST, port=config.PORT)

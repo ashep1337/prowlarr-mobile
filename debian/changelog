@@ -1,0 +1,13 @@
+prowlarr-mobile (0.1.0-2) unstable; urgency=medium
+
+  * Listen on all IPv4 interfaces by default.
+
+ -- ashep <ashep@ai>  Fri, 13 Nov 2026 23:01:59 -0600
+
+prowlarr-mobile (0.1.0-1) unstable; urgency=medium
+
+  * Initial native-installation package for Debian 13.
+  * Install the application, protected configuration and systemd service.
+  * Add homepage, installed-path and health endpoint smoke tests.
+
+ -- Alex Shephard <ashep1337@users.noreply.github.com>  Fri, 13 Nov 2026 22:00:00 -0600

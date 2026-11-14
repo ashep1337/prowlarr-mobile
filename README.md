@@ -28,6 +28,9 @@ A lightweight, mobile-friendly web UI for searching torrents via [Prowlarr](http
 
 ## Setup
 
+For a native Debian 13 package, see the [Debian packaging walkthrough](docs/debian-packaging.md).
+The manual Python installation below remains available.
+
 ### 1. Clone the repo
 
 ```bash

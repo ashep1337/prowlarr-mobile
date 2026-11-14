@@ -1,9 +1,0 @@
-nohup: ignoring input
-python-dotenv could not parse statement starting at line 1
-INFO:     Will watch for changes in these directories: ['/home/ashep/dev/prowlarr-mobile']
-INFO:     Uvicorn running on http://0.0.0.0:8888 (Press CTRL+C to quit)
-INFO:     Started reloader process [234919] using StatReload
-python-dotenv could not parse statement starting at line 1
-INFO:     Started server process [234924]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
